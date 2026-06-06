@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -e
+
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+echo "=== 最近一周日记 ==="
+echo ""
+
+for i in $(seq 0 6); do
+  DATE=$(date -v -${i}d +%Y-%m-%d 2>/dev/null || date -d "-${i} day" +%Y-%m-%d)
+  FILE="$PROJECT_DIR/entries/$(echo $DATE | tr '-' '/').md"
+  if [ -f "$FILE" ]; then
+    TITLE=$(head -1 "$FILE")
+    echo "✓  $DATE  $TITLE"
+  else
+    echo "✗  $DATE  (未写)"
+  fi
+done
+
+echo ""
+echo "位置: $PROJECT_DIR/entries"

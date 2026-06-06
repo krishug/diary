@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -e
+
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+YEAR=$(date +%Y)
+MONTH=$(date +%m)
+DAY=$(date +%d)
+DATE="$YEAR-$MONTH-$DAY"
+FILE="$PROJECT_DIR/entries/$YEAR/$MONTH/$DATE.md"
+MKDIR="$PROJECT_DIR/entries/$YEAR/$MONTH"
+
+mkdir -p "$MKDIR"
+
+if [ ! -f "$FILE" ]; then
+  WEEKDAY=$(date +%A)
+  sed -e "s/{{date}}/$DATE/g" -e "s/{{weekday}}/$WEEKDAY/g" "$PROJECT_DIR/_template.md" > "$FILE"
+  echo "✨ Created: $FILE"
+fi
+
+if [ -n "$EDITOR" ]; then
+  $EDITOR "$FILE"
+elif command -v open &>/dev/null; then
+  open "$FILE"
+else
+  nano "$FILE"
+fi

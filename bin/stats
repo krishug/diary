@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+
+PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+ENTRIES_DIR="$PROJECT_DIR/entries"
+
+TOTAL=$(find "$ENTRIES_DIR" -name "*.md" -type f | wc -l | tr -d ' ')
+THIS_YEAR=$(find "$ENTRIES_DIR/$(date +%Y)" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
+THIS_MONTH=$(find "$ENTRIES_DIR/$(date +%Y)/$(date +%m)" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
+LATEST=$(find "$ENTRIES_DIR" -name "*.md" -type f -exec ls -t {} + 2>/dev/null | head -3)
+
+echo "📊 日记统计"
+echo "=========="
+echo "总篇数:     $TOTAL"
+echo "今年篇数:   $THIS_YEAR"
+echo "本月篇数:   $THIS_MONTH"
+echo ""
+echo "最近三篇:"
+echo "$LATEST" | while read f; do
+  if [ -n "$f" ]; then
+    TITLE=$(head -1 "$f" 2>/dev/null)
+    echo "  $(basename "$(dirname "$f")")/$(basename "$f")  $TITLE"
+  fi
+done
